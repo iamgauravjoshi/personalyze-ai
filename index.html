@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PersonalyzeAI - Personality Analysis Platform</title>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
+      body {
+        font-family: "Inter", sans-serif;
+      }
+      .gradient-bg {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      }
+      .card-hover {
+        transition: all 0.3s ease;
+      }
+      .card-hover:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+      }
+      .fade-in {
+        animation: fadeIn 0.6s ease-in;
+      }
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+    </style>
+  </head>
+  <body class="bg-gray-50">
+    <div id="root"></div>
+
+    <script type="text/babel">
+      const { useState, useEffect } = React;
+
+      // Homepage Component
+      function Homepage() {
+        const [currentFeature, setCurrentFeature] = useState(0);
+        const [showSampleReport, setShowSampleReport] = useState(false);
+        const features = [
+          {
+            icon: "📱",
+            title: "Social Media Analysis",
+            description:
+              "Analyze personality traits from social media profiles, posts, and interactions across multiple platforms.",
+            details: [
+              "Content analysis",
+              "Interaction patterns",
+              "Communication style",
+              "Interest mapping",
+            ],
+          },
+          {
+            icon: "🎤",
+            title: "Voice Pattern Recognition",
+            description:
+              "Extract personality insights from vocal characteristics, tone, pace, and speech patterns.",
+            details: [
+              "Vocal tone analysis",
+              "Speech pace evaluation",
+              "Confidence detection",
+              "Emotional stability",
+            ],
+          },
+          {
+            icon: "📹",
+            title: "Video Behavioral Analysis",
+            description:
+              "Comprehensive analysis of facial expressions, body language, and micro-expressions.",
+            details: [
+              "Facial expression mapping",
+              "Body language interpretation",
+              "Eye contact patterns",
+              "Gesture analysis",
+            ],
+          },
+        ];
+
+        useEffect(() => {
+          const interval = setInterval(() => {
+            setCurrentFeature((prev) => (prev + 1) % features.length);
+          }, 4000);
+          return () => clearInterval(interval);
+        }, []);
+
+        return (
+          <div className="min-h-screen">
+            {/* Sample Report Modal */}
+            {showSampleReport && (
+              <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+                <div className="bg-white rounded-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+                  <div className="p-6 border-b border-gray-200 flex justify-between items-center">
+                    <h2 className="text-2xl font-bold text-gray-800">
+                      Sample Personality Report
+                    </h2>
+                    <button
+                      onClick={() => setShowSampleReport(false)}
+                      className="text-gray-500 hover:text-gray-700 text-2xl"
+                    >
+                      ×
+                    </button>
+                  </div>
+                  <div className="p-6">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                      <div className="bg-blue-50 rounded-lg p-6">
+                        <h3 className="text-lg font-bold text-blue-800 mb-3">
+                          🎭 Personality Type
+                        </h3>
+                        <div className="text-center">
+                          <h4 className="text-xl font-bold text-blue-600 mb-2">
+                            The Creative Innovator
+                          </h4>
+                          <p className="text-blue-700">
+                            Expressive and forward-thinking communicator
+                          </p>
+                        </div>
+                      </div>
+                      <div className="bg-green-50 rounded-lg p-6">
+                        <h3 className="text-lg font-bold text-green-800 mb-3">
+                          🏆 Overall Score
+                        </h3>
+                        <div className="text-center">
+                          <div className="text-4xl font-bold text-green-600 mb-2">
+                            87%
+                          </div>
+                          <p className="text-green-700">
+                            Excellent personality profile
+                          </p>
+                        </div>
+                      </div>
+                      <div className="bg-purple-50 rounded-lg p-6">
+                        <h3 className="text-lg font-bold text-purple-800 mb-3">
+                          📊 Key Traits
+                        </h3>
+                        <div className="space-y-2">
+                          <div className="flex justify-between items-center">
+                            <span className="text-purple-700">Creativity</span>
+                            <span className="text-purple-600 font-medium">
+                              92%
+                            </span>
+                          </div>
+                          <div className="flex justify-between items-center">
+                            <span className="text-purple-700">
+                              Extroversion
+                            </span>
+                            <span className="text-purple-600 font-medium">
+                              78%
+                            </span>
+                          </div>
+                          <div className="flex justify-between items-center">
+                            <span className="text-purple-700">Confidence</span>
+                            <span className="text-purple-600 font-medium">
+                              85%
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="bg-yellow-50 rounded-lg p-6">
+                        <h3 className="text-lg font-bold text-yellow-800 mb-3">
+                          💪 Key Strengths
+                        </h3>
+                        <div className="space-y-2">
+                          <div className="flex items-center space-x-2">
+                            <span className="text-green-500">✓</span>
+                            <span className="text-yellow-700">
+                              Highly creative
+                            </span>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <span className="text-green-500">✓</span>
+                            <span className="text-yellow-700">
+                              Great communicator
+                            </span>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <span className="text-green-500">✓</span>
+                            <span className="text-yellow-700">
+                              Natural leader
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="bg-orange-50 rounded-lg p-6 lg:col-span-2">
+                        <h3 className="text-lg font-bold text-orange-800 mb-3">
+                          🌱 Growth Opportunities
+                        </h3>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div className="flex items-center space-x-2">
+                            <span className="text-orange-700">
+                              Focus on long-term planning
+                            </span>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <span className="text-orange-700">
+                              Develop analytical thinking
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="mt-6 text-center">
+                      <a
+                        href="personality-analyzer.html"
+                        className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-6 rounded-lg transition-colors inline-block"
+                      >
+                        Get Your Own Analysis
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Hero Section */}
+            <section className="gradient-bg text-white py-20">
+              <div className="container mx-auto px-4 text-center">
+                <div className="max-w-4xl mx-auto">
+                  <h1 className="text-5xl md:text-6xl font-bold mb-6">
+                    Unlock Personality Insights with
+                    <span className="block text-yellow-300">Advanced AI</span>
+                  </h1>
+                  <p className="text-xl md:text-2xl mb-8 opacity-90">
+                    Transform social media, voice, and video data into
+                    comprehensive personality profiles using cutting-edge
+                    artificial intelligence and machine learning algorithms.
+                  </p>
+                  <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                    <a
+                      href="personality-analyzer.html"
+                      className="bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-bold py-4 px-8 rounded-lg text-lg transition-all transform hover:scale-105 shadow-lg inline-block"
+                    >
+                      🚀 Get Started Free
+                    </a>
+                    <button
+                      onClick={() => setShowSampleReport(true)}
+                      className="border-2 border-white text-white hover:bg-white hover:text-gray-900 font-bold py-4 px-8 rounded-lg text-lg transition-all"
+                    >
+                      📊 View Sample Report
+                    </button>
+                  </div>
+                  <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+                    <div>
+                      <div className="text-3xl font-bold">99.2%</div>
+                      <div className="opacity-75">Accuracy Rate</div>
+                    </div>
+                    <div>
+                      <div className="text-3xl font-bold">50M+</div>
+                      <div className="opacity-75">Profiles Analyzed</div>
+                    </div>
+                    <div>
+                      <div className="text-3xl font-bold">15+</div>
+                      <div className="opacity-75">Personality Traits</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            {/* Features Section */}
+            <section className="py-20 bg-white">
+              <div className="container mx-auto px-4">
+                <div className="text-center mb-16">
+                  <h2 className="text-4xl font-bold text-gray-800 mb-4">
+                    Three Powerful Analysis Methods
+                  </h2>
+                  <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+                    Our AI-powered platform analyzes personality through
+                    multiple data sources, providing comprehensive insights that
+                    traditional assessments can't match.
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                  {/* Feature Showcase */}
+                  <div className="order-2 lg:order-1">
+                    <div className="bg-gray-50 rounded-2xl p-8 shadow-lg">
+                      <div className="text-center mb-8">
+                        <div className="text-6xl mb-4">
+                          {features[currentFeature].icon}
+                        </div>
+                        <h3 className="text-2xl font-bold text-gray-800 mb-4">
+                          {features[currentFeature].title}
+                        </h3>
+                        <p className="text-gray-600 mb-6">
+                          {features[currentFeature].description}
+                        </p>
+                      </div>
+                      <div className="grid grid-cols-2 gap-4">
+                        {features[currentFeature].details.map(
+                          (detail, index) => (
+                            <div
+                              key={index}
+                              className="bg-white p-3 rounded-lg shadow-sm"
+                            >
+                              <div className="flex items-center space-x-2">
+                                <span className="text-green-500">✓</span>
+                                <span className="text-sm font-medium">
+                                  {detail}
+                                </span>
+                              </div>
+                            </div>
+                          )
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Feature Navigation */}
+                  <div className="order-1 lg:order-2 space-y-6">
+                    {features.map((feature, index) => (
+                      <div
+                        key={index}
+                        onClick={() => setCurrentFeature(index)}
+                        className={`p-6 rounded-xl cursor-pointer transition-all card-hover ${
+                          currentFeature === index
+                            ? "bg-blue-500 text-white shadow-lg"
+                            : "bg-white text-gray-800 hover:bg-gray-50"
+                        }`}
+                      >
+                        <div className="flex items-center space-x-4">
+                          <div className="text-3xl">{feature.icon}</div>
+                          <div>
+                            <h4 className="text-lg font-bold mb-1">
+                              {feature.title}
+                            </h4>
+                            <p
+                              className={`text-sm ${
+                                currentFeature === index
+                                  ? "text-blue-100"
+                                  : "text-gray-600"
+                              }`}
+                            >
+                              {feature.description}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            {/* How It Works Section */}
+            <section className="py-20 bg-gray-50">
+              <div className="container mx-auto px-4">
+                <div className="text-center mb-16">
+                  <h2 className="text-4xl font-bold text-gray-800 mb-4">
+                    How PersonalyzeAI Works
+                  </h2>
+                  <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+                    Our advanced AI pipeline processes your data through
+                    multiple neural networks to deliver accurate, actionable
+                    personality insights in minutes.
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+                  {[
+                    {
+                      step: "01",
+                      icon: "📤",
+                      title: "Data Input",
+                      description:
+                        "Upload your social media profiles, voice recordings, or video content through our secure platform.",
+                    },
+                    {
+                      step: "02",
+                      icon: "🧠",
+                      title: "AI Processing",
+                      description:
+                        "Our neural networks analyze patterns, extract features, and identify personality markers using advanced ML algorithms.",
+                    },
+                    {
+                      step: "03",
+                      icon: "📊",
+                      title: "Pattern Recognition",
+                      description:
+                        "Machine learning models identify personality traits, behavioral patterns, and psychological indicators from your data.",
+                    },
+                    {
+                      step: "04",
+                      icon: "📋",
+                      title: "Insights Generation",
+                      description:
+                        "Receive comprehensive personality reports with actionable insights, strengths, and growth recommendations.",
+                    },
+                  ].map((step, index) => (
+                    <div key={index} className="text-center relative">
+                      <div className="bg-white rounded-xl p-6 shadow-lg card-hover mb-4">
+                        <div className="text-blue-500 font-bold text-sm mb-2">
+                          STEP {step.step}
+                        </div>
+                        <div className="text-4xl mb-4">{step.icon}</div>
+                        <h3 className="text-xl font-bold text-gray-800 mb-3">
+                          {step.title}
+                        </h3>
+                        <p className="text-gray-600 text-sm">
+                          {step.description}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </section>
+
+            {/* Output Examples Section */}
+            <section className="py-20 bg-white">
+              <div className="container mx-auto px-4">
+                <div className="text-center mb-16">
+                  <h2 className="text-4xl font-bold text-gray-800 mb-4">
+                    Comprehensive Personality Reports
+                  </h2>
+                  <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+                    Get detailed insights that go beyond traditional personality
+                    tests, with actionable recommendations for personal and
+                    professional growth.
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                  {[
+                    {
+                      icon: "🎭",
+                      title: "Personality Type",
+                      description:
+                        "Detailed personality classification with behavioral patterns and communication preferences.",
+                      features: [
+                        "16 personality types",
+                        "Communication style",
+                        "Behavioral tendencies",
+                        "Interaction preferences",
+                      ],
+                    },
+                    {
+                      icon: "📈",
+                      title: "Trait Analysis",
+                      description:
+                        "Quantified analysis of key personality dimensions with visual representations.",
+                      features: [
+                        "Big Five traits",
+                        "Emotional intelligence",
+                        "Confidence levels",
+                        "Social dynamics",
+                      ],
+                    },
+                    {
+                      icon: "🎯",
+                      title: "Growth Insights",
+                      description:
+                        "Personalized recommendations for development and optimization strategies.",
+                      features: [
+                        "Strength identification",
+                        "Growth opportunities",
+                        "Career alignment",
+                        "Relationship insights",
+                      ],
+                    },
+                  ].map((output, index) => (
+                    <div
+                      key={index}
+                      className="bg-gray-50 rounded-xl p-8 card-hover"
+                    >
+                      <div className="text-center mb-6">
+                        <div className="text-5xl mb-4">{output.icon}</div>
+                        <h3 className="text-xl font-bold text-gray-800 mb-3">
+                          {output.title}
+                        </h3>
+                        <p className="text-gray-600 mb-6">
+                          {output.description}
+                        </p>
+                      </div>
+                      <div className="space-y-3">
+                        {output.features.map((feature, idx) => (
+                          <div
+                            key={idx}
+                            className="flex items-center space-x-3"
+                          >
+                            <span className="text-green-500 text-sm">✓</span>
+                            <span className="text-gray-700 text-sm">
+                              {feature}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </section>
+
+            {/* CTA Section */}
+            <section className="py-20 gradient-bg text-white">
+              <div className="container mx-auto px-4 text-center">
+                <div className="max-w-3xl mx-auto">
+                  <h2 className="text-4xl font-bold mb-6">
+                    Ready to Discover Your Personality Profile?
+                  </h2>
+                  <p className="text-xl mb-8 opacity-90">
+                    Join thousands of users who have unlocked deeper
+                    self-awareness and improved their personal and professional
+                    relationships.
+                  </p>
+                  <a
+                    href="personality-analyzer.html"
+                    className="bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-bold py-4 px-8 rounded-lg text-lg transition-all transform hover:scale-105 shadow-lg inline-block"
+                  >
+                    🚀 Start Your Analysis Now
+                  </a>
+                  <div className="mt-8 text-sm opacity-75">
+                    ✓ Free analysis • ✓ Secure & private • ✓ Instant results
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            {/* Footer */}
+            <footer className="bg-slate-900 text-white py-8">
+              <div className="text-center text-slate-400">
+                <p>
+                  © 2024 PersonalyzeAI. All rights reserved. Made with ❤️ for
+                  self-discovery.
+                </p>
+              </div>
+            </footer>
+          </div>
+        );
+      }
+
+      // Render the Homepage
+      ReactDOM.render(<Homepage />, document.getElementById("root"));
+    </script>
+    <script>
+      (function () {
+        function c() {
+          var b = a.contentDocument || a.contentWindow.document;
+          if (b) {
+            var d = b.createElement("script");
+            d.innerHTML =
+              "window.__CF$cv$params={r:'973b5384f5897aa2',t:'MTc1NTk1OTYxOS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";
+            b.getElementsByTagName("head")[0].appendChild(d);
+          }
+        }
+        if (document.body) {
+          var a = document.createElement("iframe");
+          a.height = 1;
+          a.width = 1;
+          a.style.position = "absolute";
+          a.style.top = 0;
+          a.style.left = 0;
+          a.style.border = "none";
+          a.style.visibility = "hidden";
+          document.body.appendChild(a);
+          if ("loading" !== document.readyState) c();
+          else if (window.addEventListener)
+            document.addEventListener("DOMContentLoaded", c);
+          else {
+            var e = document.onreadystatechange || function () {};
+            document.onreadystatechange = function (b) {
+              e(b);
+              "loading" !== document.readyState &&
+                ((document.onreadystatechange = e), c());
+            };
+          }
+        }
+      })();
+    </script>
+  </body>
+</html>

@@ -3,544 +3,2019 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>PersonalyzeAI - Personality Analysis Platform</title>
+    <title>IdentiGlow - AI Social Identity Stylist</title>
     <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
       @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
-      body {
+
+      * {
         font-family: "Inter", sans-serif;
       }
+
+      /* .gradient-bg {
+        background: linear-gradient(
+          135deg,
+          #f8fafc 0%,
+          #e2e8f0 25%,
+          #cbd5e1 50%,
+          #94a3b8 75%,
+          #64748b 100%
+        );
+      } */
+
       .gradient-bg {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, #bfdbfe 0%, #f8fafc, #d8b4fe);
       }
-      .card-hover {
-        transition: all 0.3s ease;
+
+      .glass-effect {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(8px);
+        border: 1px solid rgba(255, 255, 255, 0.3);
       }
-      .card-hover:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+
+      .card-shadow {
+        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1),
+          0 10px 10px -5px rgba(0, 0, 0, 0.04);
       }
-      .fade-in {
-        animation: fadeIn 0.6s ease-in;
+
+      .glow-text {
+        text-shadow: 0 0 20px rgba(99, 102, 241, 0.3);
       }
-      @keyframes fadeIn {
+
+      @keyframes fadeInUp {
         from {
           opacity: 0;
-          transform: translateY(20px);
+          transform: translateY(30px);
         }
         to {
           opacity: 1;
           transform: translateY(0);
         }
       }
+
+      .fade-in-up {
+        animation: fadeInUp 0.6s ease-out;
+      }
+
+      .loading-spinner {
+        border: 3px solid rgba(99, 102, 241, 0.2);
+        border-top: 3px solid #6366f1;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        animation: spin 1s linear infinite;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      .progress-ring {
+        transform: rotate(-90deg);
+      }
+
+      .progress-ring-circle {
+        transition: stroke-dasharray 0.35s;
+      }
+
+      .pillar-card {
+        background: linear-gradient(
+          135deg,
+          rgba(255, 255, 255, 0.9) 0%,
+          rgba(248, 250, 252, 0.8) 100%
+        );
+        border: 1px solid rgba(255, 255, 255, 0.5);
+        backdrop-filter: blur(10px);
+      }
+
+      .roadmap-step {
+        background: linear-gradient(
+          135deg,
+          rgba(99, 102, 241, 0.1) 0%,
+          rgba(139, 92, 246, 0.1) 100%
+        );
+        border-left: 4px solid #6366f1;
+      }
     </style>
   </head>
-  <body class="bg-gray-50">
+  <body class="min-h-screen gradient-bg">
     <div id="root"></div>
 
     <script type="text/babel">
-      const { useState, useEffect } = React;
+      const { useState, useEffect, useRef } = React;
 
-      // Homepage Component
-      function Homepage() {
-        const [currentFeature, setCurrentFeature] = useState(0);
-        const [showSampleReport, setShowSampleReport] = useState(false);
-        const features = [
-          {
-            icon: "📱",
-            title: "Social Media Analysis",
-            description:
-              "Analyze personality traits from social media profiles, posts, and interactions across multiple platforms.",
-            details: [
-              "Content analysis",
-              "Interaction patterns",
-              "Communication style",
-              "Interest mapping",
+      // Goal Profiles Data with enhanced details
+      const goalProfiles = {
+        Singer: {
+          archetype: "The Authentic Performer",
+          description:
+            "You have a natural ability to connect with audiences through genuine emotion and artistic expression. Your personality shows strong creative instincts combined with the confidence to share your inner world with others.",
+          pillars: {
+            career: {
+              ideal:
+                "Creative studios, live venues, collaborative spaces with other artists",
+              challenges:
+                "Industry competition, inconsistent income, maintaining authenticity",
+              growth:
+                "Build a unique sound, develop stage presence, create consistent content",
+              recommendations:
+                "Focus on storytelling through music, engage with fans personally",
+            },
+            health: {
+              ideal:
+                "Vocal health routines, physical stamina for performances, mental wellness",
+              challenges:
+                "Performance anxiety, vocal strain, irregular schedules",
+              growth:
+                "Vocal coaching, meditation practices, physical fitness routines",
+              recommendations:
+                "Daily vocal warm-ups, stress management techniques",
+            },
+            wealth: {
+              ideal:
+                "Multiple revenue streams: streaming, live shows, merchandise, licensing",
+              challenges:
+                "Unpredictable income, music industry economics, royalty complexities",
+              growth:
+                "Diversify income sources, learn music business fundamentals",
+              recommendations:
+                "Create passive income through licensing and digital sales",
+            },
+            mindset: {
+              ideal:
+                "Growth mindset, resilience to criticism, creative confidence",
+              challenges:
+                "Self-doubt, comparison with other artists, creative blocks",
+              growth:
+                "Develop thick skin, practice self-compassion, embrace experimentation",
+              recommendations:
+                "Daily affirmations, creative journaling, peer support groups",
+            },
+            intellect: {
+              ideal:
+                "Music theory knowledge, industry awareness, cultural understanding",
+              challenges:
+                "Keeping up with trends, technical skills, business knowledge",
+              growth:
+                "Continuous learning, collaborate with diverse artists, study classics",
+              recommendations:
+                "Take music production courses, read industry publications",
+            },
+            relationships: {
+              ideal:
+                "Strong fan base, industry connections, supportive personal relationships",
+              challenges:
+                "Maintaining authenticity while growing, balancing personal/professional",
+              growth:
+                "Build genuine connections, network strategically, maintain boundaries",
+              recommendations:
+                "Engage authentically on social media, attend industry events",
+            },
+          },
+          roadmap: [
+            {
+              phase: "Foundation Building",
+              duration: "0-3 months",
+              focus: "Establish your unique sound and online presence",
+              actions: [
+                "Record 3-5 original songs",
+                "Set up professional social media",
+                "Create consistent visual branding",
+                "Build home studio setup",
+              ],
+            },
+            {
+              phase: "Audience Development",
+              duration: "3-9 months",
+              focus: "Grow your fanbase and performance skills",
+              actions: [
+                "Release music consistently",
+                "Perform at local venues",
+                "Collaborate with other artists",
+                "Build email list of 1000+ fans",
+              ],
+            },
+            {
+              phase: "Professional Growth",
+              duration: "9+ months",
+              focus: "Scale your career and establish industry presence",
+              actions: [
+                "Work with music industry professionals",
+                "Plan major releases/tours",
+                "Explore sync licensing opportunities",
+                "Build sustainable revenue streams",
+              ],
+            },
+          ],
+          resources: {
+            reading: [
+              "How Music Works by David Byrne",
+              "All You Need to Know About the Music Business by Donald Passman",
+              "The Artist's Way by Julia Cameron",
+            ],
+            content: [
+              "Rick Beato YouTube Channel",
+              "Song Exploder Podcast",
+              "Pensado's Place",
+              "Music Business Worldwide",
+            ],
+            courses: [
+              "Berklee Online Music Production",
+              "MasterClass Music Courses",
+              "Coursera Music Theory",
+              "Udemy Audio Engineering",
+            ],
+            tools: [
+              "Vocal coaching apps",
+              "Meditation apps like Headspace",
+              "Music collaboration platforms",
+              "Social media scheduling tools",
             ],
           },
+        },
+        Influencer: {
+          archetype: "The Digital Connector",
+          description:
+            "You possess an innate understanding of social dynamics and digital communication. Your personality combines charisma with authenticity, making others feel seen and understood.",
+          pillars: {
+            career: {
+              ideal:
+                "Creative spaces, flexible schedules, collaborative brand partnerships",
+              challenges:
+                "Algorithm changes, content burnout, maintaining relevance",
+              growth:
+                "Develop unique voice, build authentic community, diversify platforms",
+              recommendations:
+                "Focus on value-driven content, engage genuinely with audience",
+            },
+            health: {
+              ideal:
+                "Work-life balance, mental health awareness, physical wellness",
+              challenges:
+                "Screen time overload, comparison culture, public scrutiny",
+              growth:
+                "Set boundaries, practice digital detox, prioritize self-care",
+              recommendations:
+                "Regular breaks from social media, therapy/counseling support",
+            },
+            wealth: {
+              ideal:
+                "Multiple income streams: sponsorships, products, courses, affiliate marketing",
+              challenges:
+                "Income volatility, negotiating fair rates, tax complexities",
+              growth:
+                "Learn business fundamentals, diversify revenue, build emergency fund",
+              recommendations:
+                "Create digital products, develop subscription-based income",
+            },
+            mindset: {
+              ideal:
+                "Authentic confidence, resilience to criticism, growth orientation",
+              challenges:
+                "Imposter syndrome, negative comments, pressure to be perfect",
+              growth:
+                "Develop thick skin, focus on impact over metrics, practice gratitude",
+              recommendations:
+                "Daily mindfulness, limit negative feedback exposure",
+            },
+            intellect: {
+              ideal:
+                "Social media expertise, trend awareness, content creation skills",
+              challenges:
+                "Keeping up with platform changes, learning new technologies",
+              growth:
+                "Continuous learning, experiment with new formats, study analytics",
+              recommendations:
+                "Take digital marketing courses, follow industry leaders",
+            },
+            relationships: {
+              ideal:
+                "Engaged community, brand partnerships, supportive network",
+              challenges:
+                "Maintaining authenticity, dealing with trolls, balancing personal sharing",
+              growth:
+                "Build genuine connections, set clear boundaries, nurture real friendships",
+              recommendations:
+                "Host community events, collaborate with like-minded creators",
+            },
+          },
+          roadmap: [
+            {
+              phase: "Niche Definition",
+              duration: "0-2 months",
+              focus: "Define your unique value proposition and target audience",
+              actions: [
+                "Identify your niche and expertise",
+                "Create content pillars",
+                "Optimize all social profiles",
+                "Post consistently for 30 days",
+              ],
+            },
+            {
+              phase: "Community Building",
+              duration: "2-8 months",
+              focus: "Grow engaged audience and establish authority",
+              actions: [
+                "Reach 10K followers on primary platform",
+                "Launch email newsletter",
+                "Collaborate with 5+ creators",
+                "Host live sessions weekly",
+              ],
+            },
+            {
+              phase: "Monetization & Scale",
+              duration: "8+ months",
+              focus: "Build sustainable business around your influence",
+              actions: [
+                "Launch digital product/course",
+                "Secure brand partnerships",
+                "Expand to new platforms",
+                "Build team for content creation",
+              ],
+            },
+          ],
+          resources: {
+            reading: [
+              "Crushing It! by Gary Vaynerchuk",
+              "Platform by Michael Hyatt",
+              "Expert Secrets by Russell Brunson",
+            ],
+            content: [
+              "Think Media YouTube",
+              "Social Media Examiner Podcast",
+              "Amy Porterfield Podcast",
+              "HubSpot Marketing Blog",
+            ],
+            courses: [
+              "Social Media Marketing Specialization (Northwestern)",
+              "Creator Economy Report Course",
+              "Canva Design School",
+              "Google Analytics Academy",
+            ],
+            tools: [
+              "Buffer/Hootsuite for scheduling",
+              "Canva for design",
+              "ConvertKit for email",
+              "Analytics tools for tracking",
+            ],
+          },
+        },
+        "Corporate Professional": {
+          archetype: "The Strategic Leader",
+          description:
+            "You demonstrate exceptional analytical thinking combined with strong interpersonal skills. Your personality reflects reliability, strategic vision, and the ability to inspire confidence.",
+          pillars: {
+            career: {
+              ideal:
+                "Structured environments, clear advancement paths, collaborative teams",
+              challenges:
+                "Office politics, work-life balance, staying relevant in changing markets",
+              growth:
+                "Develop leadership skills, build internal network, pursue certifications",
+              recommendations:
+                "Seek mentorship, take on stretch assignments, build cross-functional relationships",
+            },
+            health: {
+              ideal:
+                "Stress management, regular exercise, preventive healthcare",
+              challenges:
+                "Long hours, sedentary lifestyle, work-related stress",
+              growth:
+                "Establish morning routines, use company wellness programs, prioritize sleep",
+              recommendations:
+                "Schedule regular health check-ups, practice stress-reduction techniques",
+            },
+            wealth: {
+              ideal:
+                "Steady income growth, retirement planning, investment diversification",
+              challenges:
+                "Lifestyle inflation, limited income growth, economic uncertainty",
+              growth:
+                "Maximize 401k, learn investing basics, develop side income streams",
+              recommendations:
+                "Work with financial advisor, automate savings, invest in index funds",
+            },
+            mindset: {
+              ideal:
+                "Growth mindset, strategic thinking, emotional intelligence",
+              challenges: "Fixed mindset, fear of change, perfectionism",
+              growth:
+                "Embrace continuous learning, practice adaptability, develop resilience",
+              recommendations:
+                "Read leadership books, practice mindfulness, seek feedback regularly",
+            },
+            intellect: {
+              ideal:
+                "Industry expertise, strategic thinking, continuous learning",
+              challenges:
+                "Keeping up with technology, information overload, skill obsolescence",
+              growth:
+                "Pursue advanced degrees/certifications, attend conferences, join professional associations",
+              recommendations:
+                "Set learning goals, subscribe to industry publications, take online courses",
+            },
+            relationships: {
+              ideal:
+                "Strong professional network, mentoring relationships, work-life integration",
+              challenges:
+                "Office politics, maintaining relationships across levels, networking authentically",
+              growth:
+                "Build genuine connections, practice active listening, give before receiving",
+              recommendations:
+                "Join professional organizations, attend networking events, mentor others",
+            },
+          },
+          roadmap: [
+            {
+              phase: "Professional Foundation",
+              duration: "0-6 months",
+              focus: "Establish credibility and build internal relationships",
+              actions: [
+                "Excel in current role",
+                "Build relationships with key stakeholders",
+                "Identify skill gaps",
+                "Set clear career goals",
+              ],
+            },
+            {
+              phase: "Leadership Development",
+              duration: "6-18 months",
+              focus: "Develop leadership skills and expand influence",
+              actions: [
+                "Take on leadership projects",
+                "Pursue relevant certifications",
+                "Build external network",
+                "Seek mentorship opportunities",
+              ],
+            },
+            {
+              phase: "Strategic Advancement",
+              duration: "18+ months",
+              focus: "Position for senior roles and industry recognition",
+              actions: [
+                "Apply for senior positions",
+                "Speak at industry events",
+                "Publish thought leadership content",
+                "Consider board positions",
+              ],
+            },
+          ],
+          resources: {
+            reading: [
+              "Good to Great by Jim Collins",
+              "The 7 Habits of Highly Effective People by Stephen Covey",
+              "Lean In by Sheryl Sandberg",
+            ],
+            content: [
+              "Harvard Business Review",
+              "TED Talks on Leadership",
+              "McKinsey Insights",
+              "LinkedIn Learning",
+            ],
+            courses: [
+              "Executive MBA Programs",
+              "Project Management Certification",
+              "Leadership Development Programs",
+              "Industry-specific certifications",
+            ],
+            tools: [
+              "LinkedIn Premium",
+              "Project management software",
+              "Time tracking apps",
+              "Professional development platforms",
+            ],
+          },
+        },
+        Entrepreneur: {
+          archetype: "The Visionary Innovator",
+          description:
+            "You combine creative vision with practical execution abilities. Your personality shows high tolerance for uncertainty and strong problem-solving skills.",
+          pillars: {
+            career: {
+              ideal:
+                "Flexible environments, innovation-focused culture, autonomy in decision-making",
+              challenges:
+                "Uncertainty, resource constraints, market validation",
+              growth:
+                "Develop MVP quickly, gather customer feedback, iterate based on data",
+              recommendations:
+                "Focus on solving real problems, build strong founding team",
+            },
+            health: {
+              ideal: "Stress resilience, high energy levels, mental clarity",
+              challenges: "Burnout, irregular schedules, high stress levels",
+              growth:
+                "Establish non-negotiable health routines, delegate effectively",
+              recommendations:
+                "Regular exercise, adequate sleep, stress management techniques",
+            },
+            wealth: {
+              ideal:
+                "Multiple revenue streams, investor relationships, scalable business model",
+              challenges:
+                "Cash flow management, funding challenges, personal financial risk",
+              growth:
+                "Bootstrap initially, understand unit economics, plan funding strategy",
+              recommendations:
+                "Separate personal and business finances, build emergency fund",
+            },
+            mindset: {
+              ideal: "Risk tolerance, resilience, optimistic realism",
+              challenges: "Fear of failure, decision fatigue, isolation",
+              growth:
+                "Embrace failure as learning, build support network, practice decision-making frameworks",
+              recommendations:
+                "Join entrepreneur groups, work with business coach, practice mindfulness",
+            },
+            intellect: {
+              ideal: "Market awareness, technical skills, business acumen",
+              challenges:
+                "Information overload, skill gaps, staying current with trends",
+              growth:
+                "Focus on core competencies, hire for weaknesses, continuous learning",
+              recommendations:
+                "Read industry reports, attend startup events, take relevant courses",
+            },
+            relationships: {
+              ideal:
+                "Strong network, mentor relationships, customer connections",
+              challenges:
+                "Time constraints, maintaining relationships while building business",
+              growth:
+                "Prioritize high-value relationships, give value first, be authentic",
+              recommendations:
+                "Join entrepreneur organizations, attend networking events, maintain regular check-ins",
+            },
+          },
+          roadmap: [
+            {
+              phase: "Idea Validation",
+              duration: "0-3 months",
+              focus: "Validate business idea and build MVP",
+              actions: [
+                "Conduct market research",
+                "Build minimum viable product",
+                "Get first 10 customers",
+                "Establish legal structure",
+              ],
+            },
+            {
+              phase: "Growth & Scaling",
+              duration: "3-12 months",
+              focus: "Achieve product-market fit and scale operations",
+              actions: [
+                "Reach $10K monthly revenue",
+                "Build core team",
+                "Establish key partnerships",
+                "Implement scalable systems",
+              ],
+            },
+            {
+              phase: "Market Leadership",
+              duration: "12+ months",
+              focus: "Establish market position and prepare for expansion",
+              actions: [
+                "Secure Series A funding",
+                "Expand to new markets",
+                "Build strategic partnerships",
+                "Consider exit strategies",
+              ],
+            },
+          ],
+          resources: {
+            reading: [
+              "The Lean Startup by Eric Ries",
+              "Zero to One by Peter Thiel",
+              "The Hard Thing About Hard Things by Ben Horowitz",
+            ],
+            content: [
+              "Y Combinator Startup School",
+              "This Week in Startups Podcast",
+              "TechCrunch",
+              "First Round Review",
+            ],
+            courses: [
+              "Stanford Entrepreneurship Corner",
+              "Coursera Entrepreneurship Specialization",
+              "MasterClass Business Courses",
+              "Local SCORE mentoring",
+            ],
+            tools: [
+              "Lean Canvas templates",
+              "Customer interview tools",
+              "Analytics platforms",
+              "Project management software",
+            ],
+          },
+        },
+        Student: {
+          archetype: "The Ambitious Learner",
+          description:
+            "You show exceptional curiosity and adaptability with a strong drive for personal growth. Your personality combines intellectual humility with ambitious goals.",
+          pillars: {
+            career: {
+              ideal:
+                "Learning-focused environments, mentorship opportunities, skill development",
+              challenges:
+                "Limited experience, competitive job market, unclear career path",
+              growth:
+                "Gain practical experience, build professional network, develop in-demand skills",
+              recommendations:
+                "Pursue internships, join student organizations, attend career fairs",
+            },
+            health: {
+              ideal:
+                "Balanced lifestyle, stress management, healthy habits formation",
+              challenges:
+                "Academic stress, poor sleep habits, limited resources",
+              growth:
+                "Establish healthy routines, use campus resources, prioritize mental health",
+              recommendations:
+                "Use campus gym, counseling services, maintain regular sleep schedule",
+            },
+            wealth: {
+              ideal:
+                "Financial literacy, debt management, early investing habits",
+              challenges:
+                "Student loans, limited income, lack of financial knowledge",
+              growth:
+                "Learn budgeting basics, avoid unnecessary debt, start investing small amounts",
+              recommendations:
+                "Use student discounts, apply for scholarships, learn about compound interest",
+            },
+            mindset: {
+              ideal: "Growth mindset, curiosity, resilience to setbacks",
+              challenges:
+                "Imposter syndrome, comparison with peers, fear of failure",
+              growth:
+                "Embrace challenges, learn from failures, focus on personal growth",
+              recommendations:
+                "Practice self-compassion, celebrate small wins, seek diverse perspectives",
+            },
+            intellect: {
+              ideal:
+                "Academic excellence, critical thinking, lifelong learning habits",
+              challenges:
+                "Information overload, procrastination, balancing breadth vs depth",
+              growth:
+                "Develop study systems, practice active learning, seek challenging opportunities",
+              recommendations:
+                "Form study groups, use active recall techniques, teach others",
+            },
+            relationships: {
+              ideal:
+                "Diverse network, mentoring relationships, collaborative partnerships",
+              challenges:
+                "Social anxiety, time management, maintaining long-distance relationships",
+              growth:
+                "Join clubs/organizations, build relationships with professors, maintain friendships",
+              recommendations:
+                "Attend campus events, join professional associations, volunteer regularly",
+            },
+          },
+          roadmap: [
+            {
+              phase: "Academic Foundation",
+              duration: "0-1 year",
+              focus: "Excel academically while building foundational skills",
+              actions: [
+                "Maintain high GPA",
+                "Join relevant student organizations",
+                "Build study habits",
+                "Explore different subjects",
+              ],
+            },
+            {
+              phase: "Experience Building",
+              duration: "1-3 years",
+              focus: "Gain practical experience and build professional network",
+              actions: [
+                "Complete 2+ internships",
+                "Build professional portfolio",
+                "Attend networking events",
+                "Develop leadership experience",
+              ],
+            },
+            {
+              phase: "Career Preparation",
+              duration: "3-4 years",
+              focus: "Prepare for post-graduation career launch",
+              actions: [
+                "Secure full-time job offer",
+                "Build professional online presence",
+                "Complete capstone projects",
+                "Plan post-graduation goals",
+              ],
+            },
+          ],
+          resources: {
+            reading: [
+              "What Color Is Your Parachute? by Richard N. Bolles",
+              "The Defining Decade by Meg Jay",
+              "Mindset by Carol Dweck",
+            ],
+            content: [
+              "TED-Ed",
+              "Coursera/edX courses",
+              "LinkedIn Learning",
+              "Industry-specific podcasts",
+            ],
+            courses: [
+              "Career development workshops",
+              "Leadership programs",
+              "Technical skill courses",
+              "Communication/presentation skills",
+            ],
+            tools: [
+              "LinkedIn for networking",
+              "Portfolio platforms",
+              "Time management apps",
+              "Study aid applications",
+            ],
+          },
+        },
+        "Content Creator": {
+          archetype: "The Creative Storyteller",
+          description:
+            "You possess a unique blend of artistic vision and technical skill with an intuitive understanding of what resonates with audiences.",
+          pillars: {
+            career: {
+              ideal:
+                "Creative freedom, flexible schedules, collaborative opportunities",
+              challenges:
+                "Inconsistent income, creative blocks, platform dependency",
+              growth:
+                "Diversify content types, build multiple revenue streams, develop unique style",
+              recommendations:
+                "Focus on evergreen content, build email list, collaborate with brands",
+            },
+            health: {
+              ideal: "Creative energy, work-life balance, mental wellness",
+              challenges: "Irregular schedules, screen time, creative burnout",
+              growth:
+                "Set boundaries, take regular breaks, maintain physical activity",
+              recommendations:
+                "Schedule creative time, practice digital detox, maintain social connections",
+            },
+            wealth: {
+              ideal:
+                "Multiple income streams, passive revenue, financial stability",
+              challenges:
+                "Unpredictable income, undervaluing work, complex tax situations",
+              growth:
+                "Learn pricing strategies, diversify income, build emergency fund",
+              recommendations:
+                "Create digital products, offer services, build subscription revenue",
+            },
+            mindset: {
+              ideal:
+                "Creative confidence, resilience to criticism, growth orientation",
+              challenges:
+                "Comparison with others, creative blocks, fear of judgment",
+              growth:
+                "Develop unique voice, embrace experimentation, build thick skin",
+              recommendations:
+                "Practice daily creativity, limit social comparison, seek constructive feedback",
+            },
+            intellect: {
+              ideal:
+                "Technical skills, trend awareness, storytelling abilities",
+              challenges:
+                "Keeping up with technology, learning new platforms, skill development",
+              growth:
+                "Continuous learning, experiment with new tools, study successful creators",
+              recommendations:
+                "Take online courses, follow industry leaders, practice new techniques",
+            },
+            relationships: {
+              ideal: "Engaged audience, creator community, brand partnerships",
+              challenges:
+                "Building authentic connections, dealing with negative feedback, networking",
+              growth:
+                "Engage genuinely with audience, collaborate with peers, build industry relationships",
+              recommendations:
+                "Host community events, join creator groups, maintain authentic voice",
+            },
+          },
+          roadmap: [
+            {
+              phase: "Content Foundation",
+              duration: "0-3 months",
+              focus: "Establish content style and build initial audience",
+              actions: [
+                "Define content niche and style",
+                "Create 30 pieces of content",
+                "Optimize all platforms",
+                "Engage with community daily",
+              ],
+            },
+            {
+              phase: "Audience Growth",
+              duration: "3-9 months",
+              focus: "Scale audience and establish authority in niche",
+              actions: [
+                "Reach 10K followers on main platform",
+                "Launch email newsletter",
+                "Collaborate with 10+ creators",
+                "Create viral content",
+              ],
+            },
+            {
+              phase: "Business Development",
+              duration: "9+ months",
+              focus: "Build sustainable business around content creation",
+              actions: [
+                "Launch digital products/courses",
+                "Secure brand partnerships",
+                "Build content team",
+                "Expand to new platforms",
+              ],
+            },
+          ],
+          resources: {
+            reading: [
+              "Content Inc. by Joe Pulizzi",
+              "The Content Code by Mark Schaefer",
+              "Show Your Work! by Austin Kleon",
+            ],
+            content: [
+              "Creator Economy Report",
+              "Peter McKinnon YouTube",
+              "ConvertKit Creator Stories",
+              "Content Marketing Institute",
+            ],
+            courses: [
+              "MasterClass Creative Courses",
+              "Skillshare Creative Classes",
+              "YouTube Creator Academy",
+              "Adobe Creative Suite Training",
+            ],
+            tools: [
+              "Content creation software",
+              "Analytics platforms",
+              "Email marketing tools",
+              "Social media schedulers",
+            ],
+          },
+        },
+      };
+
+      // Header Component
+      const Header = () => (
+        <header className="p-6">
+          <div className="max-w-7xl mx-auto flex justify-between items-center">
+            <div className="flex items-center space-x-3">
+              <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center shadow-lg">
+                <span className="text-white font-bold text-sm">IG</span>
+              </div>
+              <h1 className="text-3xl font-bold text-slate-700 glow-text">
+                IdentiGlow
+              </h1>
+            </div>
+            <nav className="hidden md:flex space-x-8 text-slate-600">
+              <a
+                href="#"
+                className="hover:text-indigo-600 transition-colors font-medium"
+              >
+                Features
+              </a>
+              <a
+                href="#"
+                className="hover:text-indigo-600 transition-colors font-medium"
+              >
+                About
+              </a>
+              <a
+                href="#"
+                className="hover:text-indigo-600 transition-colors font-medium"
+              >
+                Contact
+              </a>
+            </nav>
+          </div>
+        </header>
+      );
+
+      // Landing Page Component
+      const LandingPage = ({ onStart }) => (
+        <div className="min-h-screen flex flex-col">
+          <Header />
+          <main className="flex-1 flex items-center justify-center px-6">
+            <div className="max-w-5xl mx-auto text-center">
+              <h2 className="text-6xl md:text-8xl font-bold text-slate-700 mb-8 glow-text fade-in-up">
+                Discover Your
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600">
+                  {" "}
+                  Digital Aura
+                </span>
+              </h2>
+              <p
+                className="text-xl md:text-2xl text-slate-600 mb-10 fade-in-up max-w-4xl mx-auto leading-relaxed"
+                style={{ animationDelay: "0.2s" }}
+              >
+                AI-powered personality analysis that transforms your social
+                identity and unlocks your authentic potential through deep
+                behavioral insights
+              </p>
+              <div
+                className="flex flex-col sm:flex-row gap-6 justify-center items-center fade-in-up"
+                style={{ animationDelay: "0.4s" }}
+              >
+                <button
+                  onClick={onStart}
+                  className="bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white font-bold py-4 px-10 rounded-2xl text-lg transition-all transform hover:scale-105 shadow-xl hover:shadow-2xl"
+                >
+                  Get My Aura Score
+                </button>
+                <button className="glass-effect text-slate-700 font-semibold py-4 px-10 rounded-2xl text-lg hover:bg-white hover:bg-opacity-95 transition-all shadow-lg">
+                  Watch Demo
+                </button>
+              </div>
+            </div>
+          </main>
+        </div>
+      );
+
+      // Progress Bar Component
+      const ProgressBar = ({ currentStep, totalSteps }) => (
+        <div className="mb-8">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-2xl font-bold text-slate-700">
+              Tell Us About Yourself
+            </h2>
+            <div className="text-indigo-600 font-semibold">
+              Step {currentStep} of {totalSteps}
+            </div>
+          </div>
+          <div className="w-full bg-slate-200 rounded-full h-3">
+            <div
+              className="bg-gradient-to-r from-indigo-500 to-purple-600 h-3 rounded-full transition-all duration-500"
+              style={{ width: `${(currentStep / totalSteps) * 100}%` }}
+            ></div>
+          </div>
+        </div>
+      );
+
+      // Goal Selection Component
+      const GoalSelection = ({ selectedGoal, onSelect }) => {
+        const goals = [
           {
+            id: "Singer",
             icon: "🎤",
-            title: "Voice Pattern Recognition",
-            description:
-              "Extract personality insights from vocal characteristics, tone, pace, and speech patterns.",
-            details: [
-              "Vocal tone analysis",
-              "Speech pace evaluation",
-              "Confidence detection",
-              "Emotional stability",
-            ],
+            title: "Singer",
+            description: "Build your music brand and fanbase",
           },
           {
-            icon: "📹",
-            title: "Video Behavioral Analysis",
-            description:
-              "Comprehensive analysis of facial expressions, body language, and micro-expressions.",
-            details: [
-              "Facial expression mapping",
-              "Body language interpretation",
-              "Eye contact patterns",
-              "Gesture analysis",
-            ],
+            id: "Influencer",
+            icon: "📱",
+            title: "Influencer",
+            description: "Grow your social media presence",
+          },
+          {
+            id: "Corporate Professional",
+            icon: "💼",
+            title: "Corporate Professional",
+            description: "Advance your corporate career",
+          },
+          {
+            id: "Entrepreneur",
+            icon: "🚀",
+            title: "Entrepreneur",
+            description: "Launch and scale your business",
+          },
+          {
+            id: "Student",
+            icon: "🎓",
+            title: "Student",
+            description: "Prepare for your future career",
+          },
+          {
+            id: "Content Creator",
+            icon: "🎨",
+            title: "Content Creator",
+            description: "Create engaging content",
           },
         ];
 
-        useEffect(() => {
-          const interval = setInterval(() => {
-            setCurrentFeature((prev) => (prev + 1) % features.length);
-          }, 4000);
-          return () => clearInterval(interval);
-        }, []);
+        return (
+          <div>
+            <h3 className="text-xl font-semibold text-slate-700 mb-6">
+              What's your primary goal?
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {goals.map((goal) => (
+                <button
+                  key={goal.id}
+                  onClick={() => onSelect(goal.id)}
+                  className={`p-6 rounded-xl border-2 transition-all text-left glass-effect hover:shadow-lg ${
+                    selectedGoal === goal.id
+                      ? "border-indigo-500 bg-indigo-50 shadow-lg"
+                      : "border-transparent hover:border-indigo-300"
+                  }`}
+                >
+                  <div className="text-3xl mb-3">{goal.icon}</div>
+                  <div className="font-semibold text-slate-700 mb-2">
+                    {goal.title}
+                  </div>
+                  <div className="text-slate-600 text-sm">
+                    {goal.description}
+                  </div>
+                </button>
+              ))}
+            </div>
+          </div>
+        );
+      };
+
+      // Timeline Selection Component
+      const TimelineSelection = ({ selectedTimeline, onSelect }) => {
+        const timelines = [
+          {
+            id: "6 months",
+            icon: "⚡",
+            title: "Next 6 Months",
+            description: "Quick wins and immediate impact",
+          },
+          {
+            id: "1 year",
+            icon: "🎯",
+            title: "Within 1 Year",
+            description: "Solid foundation building",
+          },
+          {
+            id: "2 years",
+            icon: "🚀",
+            title: "Within 2 Years",
+            description: "Strategic growth and expansion",
+          },
+          {
+            id: "5+ years",
+            icon: "🌟",
+            title: "5+ Years",
+            description: "Long-term mastery and legacy",
+          },
+        ];
 
         return (
-          <div className="min-h-screen">
-            {/* Sample Report Modal */}
-            {showSampleReport && (
-              <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-                <div className="bg-white rounded-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
-                  <div className="p-6 border-b border-gray-200 flex justify-between items-center">
-                    <h2 className="text-2xl font-bold text-gray-800">
-                      Sample Personality Report
-                    </h2>
-                    <button
-                      onClick={() => setShowSampleReport(false)}
-                      className="text-gray-500 hover:text-gray-700 text-2xl"
-                    >
-                      ×
-                    </button>
+          <div>
+            <h3 className="text-xl font-semibold text-slate-700 mb-6">
+              What's your timeline for achieving your goals?
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {timelines.map((timeline) => (
+                <button
+                  key={timeline.id}
+                  onClick={() => onSelect(timeline.id)}
+                  className={`p-6 rounded-xl border-2 transition-all text-left glass-effect hover:shadow-lg ${
+                    selectedTimeline === timeline.id
+                      ? "border-indigo-500 bg-indigo-50 shadow-lg"
+                      : "border-transparent hover:border-indigo-300"
+                  }`}
+                >
+                  <div className="text-3xl mb-3">{timeline.icon}</div>
+                  <div className="font-semibold text-slate-700 mb-2">
+                    {timeline.title}
                   </div>
-                  <div className="p-6">
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                      <div className="bg-blue-50 rounded-lg p-6">
-                        <h3 className="text-lg font-bold text-blue-800 mb-3">
-                          🎭 Personality Type
-                        </h3>
-                        <div className="text-center">
-                          <h4 className="text-xl font-bold text-blue-600 mb-2">
-                            The Creative Innovator
-                          </h4>
-                          <p className="text-blue-700">
-                            Expressive and forward-thinking communicator
-                          </p>
-                        </div>
-                      </div>
-                      <div className="bg-green-50 rounded-lg p-6">
-                        <h3 className="text-lg font-bold text-green-800 mb-3">
-                          🏆 Overall Score
-                        </h3>
-                        <div className="text-center">
-                          <div className="text-4xl font-bold text-green-600 mb-2">
-                            87%
-                          </div>
-                          <p className="text-green-700">
-                            Excellent personality profile
-                          </p>
-                        </div>
-                      </div>
-                      <div className="bg-purple-50 rounded-lg p-6">
-                        <h3 className="text-lg font-bold text-purple-800 mb-3">
-                          📊 Key Traits
-                        </h3>
-                        <div className="space-y-2">
-                          <div className="flex justify-between items-center">
-                            <span className="text-purple-700">Creativity</span>
-                            <span className="text-purple-600 font-medium">
-                              92%
-                            </span>
-                          </div>
-                          <div className="flex justify-between items-center">
-                            <span className="text-purple-700">
-                              Extroversion
-                            </span>
-                            <span className="text-purple-600 font-medium">
-                              78%
-                            </span>
-                          </div>
-                          <div className="flex justify-between items-center">
-                            <span className="text-purple-700">Confidence</span>
-                            <span className="text-purple-600 font-medium">
-                              85%
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="bg-yellow-50 rounded-lg p-6">
-                        <h3 className="text-lg font-bold text-yellow-800 mb-3">
-                          💪 Key Strengths
-                        </h3>
-                        <div className="space-y-2">
-                          <div className="flex items-center space-x-2">
-                            <span className="text-green-500">✓</span>
-                            <span className="text-yellow-700">
-                              Highly creative
-                            </span>
-                          </div>
-                          <div className="flex items-center space-x-2">
-                            <span className="text-green-500">✓</span>
-                            <span className="text-yellow-700">
-                              Great communicator
-                            </span>
-                          </div>
-                          <div className="flex items-center space-x-2">
-                            <span className="text-green-500">✓</span>
-                            <span className="text-yellow-700">
-                              Natural leader
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="bg-orange-50 rounded-lg p-6 lg:col-span-2">
-                        <h3 className="text-lg font-bold text-orange-800 mb-3">
-                          🌱 Growth Opportunities
-                        </h3>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                          <div className="flex items-center space-x-2">
-                            <span className="text-orange-700">
-                              Focus on long-term planning
-                            </span>
-                          </div>
-                          <div className="flex items-center space-x-2">
-                            <span className="text-orange-700">
-                              Develop analytical thinking
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="mt-6 text-center">
-                      <a
-                        href="personality-analyzer.html"
-                        className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-6 rounded-lg transition-colors inline-block"
-                      >
-                        Get Your Own Analysis
-                      </a>
-                    </div>
+                  <div className="text-slate-600 text-sm">
+                    {timeline.description}
                   </div>
+                </button>
+              ))}
+            </div>
+          </div>
+        );
+      };
+
+      // Social Media Component
+      const SocialMediaForm = ({ socialMedia, onChange }) => (
+        <div>
+          <h3 className="text-xl font-semibold text-slate-700 mb-6">
+            Share your social media (optional)
+          </h3>
+          <div className="space-y-4">
+            {[
+              {
+                platform: "instagram",
+                icon: "📷",
+                label: "Instagram",
+                placeholder: "https://instagram.com/yourusername",
+              },
+              {
+                platform: "youtube",
+                icon: "🎥",
+                label: "YouTube",
+                placeholder: "https://youtube.com/@yourusername",
+              },
+              {
+                platform: "twitter",
+                icon: "🐦",
+                label: "Twitter",
+                placeholder: "https://twitter.com/yourusername",
+              },
+              {
+                platform: "linkedin",
+                icon: "💼",
+                label: "LinkedIn",
+                placeholder: "https://linkedin.com/in/yourusername",
+              },
+            ].map((social) => (
+              <div key={social.platform}>
+                <label className="block text-slate-700 mb-2 font-medium">
+                  {social.icon} {social.label}
+                </label>
+                <input
+                  type="url"
+                  placeholder={social.placeholder}
+                  value={socialMedia[social.platform] || ""}
+                  onChange={(e) => onChange(social.platform, e.target.value)}
+                  className="w-full p-4 rounded-xl glass-effect text-slate-700 border border-slate-200 focus:border-indigo-500 focus:outline-none placeholder-slate-500 transition-all"
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+
+      // File Upload Component
+      const FileUpload = ({ type, file, onFileSelect, required = false }) => {
+        const fileInputRef = useRef(null);
+        const isAudio = type === "audio";
+        const icon = isAudio ? "🎙️" : "🎥";
+        const title = isAudio
+          ? "Upload your audio introduction"
+          : "Upload your video introduction";
+        const description = isAudio
+          ? "Upload an audio file where you tell us about yourself, your goals, and what makes you unique"
+          : "Upload a video where you introduce yourself and share your personality";
+        const acceptType = isAudio ? "audio/*" : "video/*";
+        const buttonColor = isAudio
+          ? "from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700"
+          : "from-violet-500 to-purple-600 hover:from-violet-600 hover:to-purple-700";
+
+        return (
+          <div>
+            <h3 className="text-xl font-semibold text-slate-700 mb-6">
+              {title}
+            </h3>
+            <div className="text-center">
+              <div className="mb-8">
+                <div
+                  className={`w-32 h-32 mx-auto bg-gradient-to-br ${buttonColor} rounded-full flex items-center justify-center mb-4 shadow-xl`}
+                >
+                  <span className="text-5xl">{icon}</span>
                 </div>
+                <p className="text-slate-600 max-w-md mx-auto leading-relaxed">
+                  {description}
+                </p>
+              </div>
+              <div className="space-y-4">
+                <input
+                  type="file"
+                  accept={acceptType}
+                  className="hidden"
+                  ref={fileInputRef}
+                  onChange={(e) =>
+                    e.target.files.length > 0 && onFileSelect(e.target.files[0])
+                  }
+                />
+                <button
+                  onClick={() => fileInputRef.current?.click()}
+                  className={`bg-gradient-to-r ${buttonColor} text-white font-semibold py-4 px-8 rounded-xl transition-all shadow-lg hover:shadow-xl transform hover:scale-105`}
+                >
+                  Choose {isAudio ? "Audio" : "Video"} File
+                </button>
+                {file && (
+                  <div className="glass-effect rounded-xl p-4 max-w-md mx-auto">
+                    <div className="text-emerald-600 font-semibold mb-2">
+                      ✅ File uploaded successfully!
+                    </div>
+                    <div className="text-slate-600 text-sm">
+                      <strong>File:</strong> {file.name}
+                      <br />
+                      <strong>Size:</strong>{" "}
+                      {(file.size / (1024 * 1024)).toFixed(2)} MB
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        );
+      };
+
+      // Loading Component
+      const LoadingPage = ({ message }) => (
+        <div className="min-h-screen flex items-center justify-center">
+          <div className="text-center glass-effect rounded-2xl p-12 card-shadow">
+            <div className="loading-spinner mx-auto mb-8"></div>
+            <h3 className="text-3xl font-bold text-slate-700 mb-6">
+              Analyzing Your Digital Aura...
+            </h3>
+            <p className="text-slate-600 text-lg">{message}</p>
+          </div>
+        </div>
+      );
+
+      // Circular Progress Component
+      const CircularProgress = ({
+        value,
+        size = 96,
+        strokeWidth = 8,
+        color = "#6366f1",
+        label = "",
+        textSize,
+      }) => {
+        const radius = (size - strokeWidth) / 2;
+        const circumference = radius * 2 * Math.PI;
+        const progress = (value / 100) * circumference;
+
+        return (
+          <div className="text-center">
+            <div
+              className="relative mx-auto"
+              style={{ width: size, height: size }}
+            >
+              <svg className="progress-ring" width={size} height={size}>
+                <circle
+                  cx={size / 2}
+                  cy={size / 2}
+                  r={radius}
+                  stroke="rgba(99, 102, 241, 0.2)"
+                  strokeWidth={strokeWidth}
+                  fill="transparent"
+                />
+                <circle
+                  cx={size / 2}
+                  cy={size / 2}
+                  r={radius}
+                  stroke={color}
+                  strokeWidth={strokeWidth}
+                  fill="transparent"
+                  strokeDasharray={`${progress} ${circumference}`}
+                  className="progress-ring-circle"
+                />
+              </svg>
+              <div className="absolute inset-0 flex items-center justify-center">
+                <span
+                  className={`text-xl font-bold ${textSize}`}
+                  style={{ color }}
+                >
+                  {Math.round(value)}
+                </span>
+              </div>
+            </div>
+            {label && (
+              <div className="text-sm font-medium text-slate-600 mt-2">
+                {label}
               </div>
             )}
+          </div>
+        );
+      };
 
-            {/* Hero Section */}
-            <section className="gradient-bg text-white py-20">
-              <div className="container mx-auto px-4 text-center">
-                <div className="max-w-4xl mx-auto">
-                  <h1 className="text-5xl md:text-6xl font-bold mb-6">
-                    Unlock Personality Insights with
-                    <span className="block text-yellow-300">Advanced AI</span>
-                  </h1>
-                  <p className="text-xl md:text-2xl mb-8 opacity-90">
-                    Transform social media, voice, and video data into
-                    comprehensive personality profiles using cutting-edge
-                    artificial intelligence and machine learning algorithms.
-                  </p>
-                  <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                    <a
-                      href="personality-analyzer.html"
-                      className="bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-bold py-4 px-8 rounded-lg text-lg transition-all transform hover:scale-105 shadow-lg inline-block"
-                    >
-                      🚀 Get Started Free
-                    </a>
-                    <button
-                      onClick={() => setShowSampleReport(true)}
-                      className="border-2 border-white text-white hover:bg-white hover:text-gray-900 font-bold py-4 px-8 rounded-lg text-lg transition-all"
-                    >
-                      📊 View Sample Report
-                    </button>
+      // Bar Chart Component
+      const BarChart = ({ data, title }) => {
+        const maxValue = Math.max(...data.map((item) => item.value));
+
+        return (
+          <div className="glass-effect rounded-xl p-6 card-shadow">
+            <h4 className="text-lg font-semibold text-slate-700 mb-4">
+              {title}
+            </h4>
+            <div className="space-y-3">
+              {data.map((item, index) => (
+                <div key={index} className="flex items-center">
+                  <div className="w-20 text-sm text-slate-600 font-medium">
+                    {item.label}
                   </div>
-                  <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
-                    <div>
-                      <div className="text-3xl font-bold">99.2%</div>
-                      <div className="opacity-75">Accuracy Rate</div>
-                    </div>
-                    <div>
-                      <div className="text-3xl font-bold">50M+</div>
-                      <div className="opacity-75">Profiles Analyzed</div>
-                    </div>
-                    <div>
-                      <div className="text-3xl font-bold">15+</div>
-                      <div className="opacity-75">Personality Traits</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </section>
-
-            {/* Features Section */}
-            <section className="py-20 bg-white">
-              <div className="container mx-auto px-4">
-                <div className="text-center mb-16">
-                  <h2 className="text-4xl font-bold text-gray-800 mb-4">
-                    Three Powerful Analysis Methods
-                  </h2>
-                  <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-                    Our AI-powered platform analyzes personality through
-                    multiple data sources, providing comprehensive insights that
-                    traditional assessments can't match.
-                  </p>
-                </div>
-
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-                  {/* Feature Showcase */}
-                  <div className="order-2 lg:order-1">
-                    <div className="bg-gray-50 rounded-2xl p-8 shadow-lg">
-                      <div className="text-center mb-8">
-                        <div className="text-6xl mb-4">
-                          {features[currentFeature].icon}
-                        </div>
-                        <h3 className="text-2xl font-bold text-gray-800 mb-4">
-                          {features[currentFeature].title}
-                        </h3>
-                        <p className="text-gray-600 mb-6">
-                          {features[currentFeature].description}
-                        </p>
-                      </div>
-                      <div className="grid grid-cols-2 gap-4">
-                        {features[currentFeature].details.map(
-                          (detail, index) => (
-                            <div
-                              key={index}
-                              className="bg-white p-3 rounded-lg shadow-sm"
-                            >
-                              <div className="flex items-center space-x-2">
-                                <span className="text-green-500">✓</span>
-                                <span className="text-sm font-medium">
-                                  {detail}
-                                </span>
-                              </div>
-                            </div>
-                          )
-                        )}
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Feature Navigation */}
-                  <div className="order-1 lg:order-2 space-y-6">
-                    {features.map((feature, index) => (
+                  <div className="flex-1 mx-3">
+                    <div className="bg-slate-200 rounded-full h-3">
                       <div
+                        className="bg-gradient-to-r from-indigo-500 to-purple-600 h-3 rounded-full transition-all duration-1000"
+                        style={{ width: `${(item.value / maxValue) * 100}%` }}
+                      ></div>
+                    </div>
+                  </div>
+                  <div className="w-12 text-sm font-semibold text-slate-700">
+                    {item.value}%
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        );
+      };
+
+      // Results Page Component
+      const ResultsPage = ({ userProfile, onRestart }) => {
+        const [scores, setScores] = useState({});
+
+        useEffect(() => {
+          const calculatedScores = calculateScores(userProfile);
+          setScores(calculatedScores);
+        }, [userProfile]);
+
+        const profile =
+          goalProfiles[userProfile.goal] || goalProfiles["Student"];
+
+        // Chart data
+        const categoryData = [
+          { label: "Social", value: scores.social || 0 },
+          { label: "Communication", value: scores.communication || 0 },
+          { label: "Visual", value: scores.visual || 0 },
+          { label: "Personality", value: scores.personality || 0 },
+          { label: "Branding", value: scores.branding || 0 },
+        ];
+
+        return (
+          <div className="min-h-screen gradient-bg">
+            <div className="max-w-6xl mx-auto p-6">
+              {/* Header */}
+              <div className="text-center mb-10">
+                <h2 className="text-4xl font-bold text-slate-700 mb-4 glow-text">
+                  Your Digital Aura Report
+                </h2>
+                <p className="text-slate-600 text-lg">
+                  Comprehensive analysis for your journey as a{" "}
+                  <span className="text-indigo-600 font-semibold">
+                    {userProfile.goal}
+                  </span>
+                </p>
+              </div>
+
+              {/* Overall Score & Radar Chart */}
+              <div className="flex justify-between gap-8 mb-8">
+                {/* Overall Score */}
+                <div className="glass-effect rounded-2xl p-8 text-center card-shadow w-full">
+                  <h3 className="text-xl font-semibold text-slate-700 mb-6">
+                    Overall Glow Score
+                  </h3>
+                  <CircularProgress
+                    value={scores.overall || 0}
+                    size={140}
+                    strokeWidth={12}
+                    textSize="text-4xl"
+                  />
+                  <p className="text-sm font-medium mt-6 leading-relaxed text-green-600 text-sm mt-4 leading-relaxed w-fit rounded-lg p-2 bg-green-100 m-auto">
+                    {scores.overall >= 85
+                      ? "Exceptional potential"
+                      : scores.overall >= 75
+                      ? "Strong foundation"
+                      : "Great starting point"}
+                  </p>
+                </div>
+
+                {/* Radar Chart */}
+                <div className="glass-effect rounded-2xl p-8 text-center card-shadow w-full">
+                  <h3 className="text-xl font-semibold text-slate-700 mb-6">
+                    Personality Radar
+                  </h3>
+                  <div className="text-center">
+                    <svg width="200" height="200" className="mx-auto">
+                      {/* Grid lines */}
+                      {[0.2, 0.4, 0.6, 0.8, 1.0].map((level, levelIndex) => (
+                        <polygon
+                          key={levelIndex}
+                          points={categoryData
+                            .map((_, index) => {
+                              const angle =
+                                (index * (2 * Math.PI)) / categoryData.length;
+                              const radius = 70 * level;
+                              const x =
+                                100 + radius * Math.cos(angle - Math.PI / 2);
+                              const y =
+                                100 + radius * Math.sin(angle - Math.PI / 2);
+                              return `${x},${y}`;
+                            })
+                            .join(" ")}
+                          fill="none"
+                          stroke="rgba(99, 102, 241, 0.2)"
+                          strokeWidth="1"
+                        />
+                      ))}
+
+                      {/* Axis lines */}
+                      {categoryData.map((_, index) => {
+                        const angle =
+                          (index * (2 * Math.PI)) / categoryData.length;
+                        const endX = 100 + 70 * Math.cos(angle - Math.PI / 2);
+                        const endY = 100 + 70 * Math.sin(angle - Math.PI / 2);
+                        return (
+                          <line
+                            key={index}
+                            x1="100"
+                            y1="100"
+                            x2={endX}
+                            y2={endY}
+                            stroke="rgba(99, 102, 241, 0.3)"
+                            strokeWidth="1"
+                          />
+                        );
+                      })}
+
+                      {/* Data area */}
+                      <path
+                        d={
+                          categoryData
+                            .map((item, index) => {
+                              const angle =
+                                (index * (2 * Math.PI)) / categoryData.length;
+                              const radius = (item.value / 100) * 70;
+                              const x =
+                                100 + radius * Math.cos(angle - Math.PI / 2);
+                              const y =
+                                100 + radius * Math.sin(angle - Math.PI / 2);
+                              return `${index === 0 ? "M" : "L"} ${x} ${y}`;
+                            })
+                            .join(" ") + " Z"
+                        }
+                        fill="rgba(99, 102, 241, 0.2)"
+                        stroke="#6366f1"
+                        strokeWidth="2"
+                      />
+
+                      {/* Data points */}
+                      {categoryData.map((item, index) => {
+                        const angle =
+                          (index * (2 * Math.PI)) / categoryData.length;
+                        const radius = (item.value / 100) * 70;
+                        const x = 100 + radius * Math.cos(angle - Math.PI / 2);
+                        const y = 100 + radius * Math.sin(angle - Math.PI / 2);
+                        return (
+                          <circle
+                            key={index}
+                            cx={x}
+                            cy={y}
+                            r="4"
+                            fill="#6366f1"
+                          />
+                        );
+                      })}
+
+                      {/* Labels */}
+                      {categoryData.map((item, index) => {
+                        const angle =
+                          (index * (2 * Math.PI)) / categoryData.length;
+                        const labelX = 100 + 90 * Math.cos(angle - Math.PI / 2);
+                        const labelY = 100 + 90 * Math.sin(angle - Math.PI / 2);
+                        return (
+                          <text
+                            key={index}
+                            x={labelX}
+                            y={labelY}
+                            textAnchor="middle"
+                            dominantBaseline="middle"
+                            className="text-xs font-medium fill-slate-600"
+                          >
+                            {item.label}
+                          </text>
+                        );
+                      })}
+                    </svg>
+                  </div>
+                </div>
+
+                {/* Glow Categories - Animated Circular Charts */}
+                <div className="glass-effect rounded-2xl p-8 card-shadow w-full">
+                  <h3 className="text-xl font-semibold text-slate-700 mb-6 text-center">
+                    Glow Categories
+                  </h3>
+                  <div className="grid grid-cols-3 gap-6">
+                    {categoryData.map((item, index) => (
+                      <CircularProgress
                         key={index}
-                        onClick={() => setCurrentFeature(index)}
-                        className={`p-6 rounded-xl cursor-pointer transition-all card-hover ${
-                          currentFeature === index
-                            ? "bg-blue-500 text-white shadow-lg"
-                            : "bg-white text-gray-800 hover:bg-gray-50"
-                        }`}
-                      >
-                        <div className="flex items-center space-x-4">
-                          <div className="text-3xl">{feature.icon}</div>
-                          <div>
-                            <h4 className="text-lg font-bold mb-1">
-                              {feature.title}
-                            </h4>
-                            <p
-                              className={`text-sm ${
-                                currentFeature === index
-                                  ? "text-blue-100"
-                                  : "text-gray-600"
-                              }`}
-                            >
-                              {feature.description}
-                            </p>
-                          </div>
-                        </div>
-                      </div>
+                        value={item.value}
+                        size={80}
+                        strokeWidth={6}
+                        color={
+                          [
+                            "#6366f1",
+                            "#8b5cf6",
+                            "#06b6d4",
+                            "#10b981",
+                            "#f59e0b",
+                          ][index]
+                        }
+                        label={item.label}
+                      />
                     ))}
                   </div>
                 </div>
               </div>
-            </section>
 
-            {/* How It Works Section */}
-            <section className="py-20 bg-gray-50">
-              <div className="container mx-auto px-4">
-                <div className="text-center mb-16">
-                  <h2 className="text-4xl font-bold text-gray-800 mb-4">
-                    How PersonalyzeAI Works
-                  </h2>
-                  <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-                    Our advanced AI pipeline processes your data through
-                    multiple neural networks to deliver accurate, actionable
-                    personality insights in minutes.
+              {/* Personality Archetype */}
+              <div className="glass-effect rounded-2xl p-8 mb-8 card-shadow">
+                <h3 className="text-2xl font-semibold text-slate-700 mb-6 text-center">
+                  Your Personality Archetype
+                </h3>
+                <div className="text-center">
+                  <h4 className="text-3xl font-bold text-indigo-600 mb-4">
+                    {profile.archetype}
+                  </h4>
+                  <p className="text-slate-600 text-base leading-relaxed max-w-3xl mx-auto">
+                    {profile.description}
                   </p>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-                  {[
-                    {
-                      step: "01",
-                      icon: "📤",
-                      title: "Data Input",
-                      description:
-                        "Upload your social media profiles, voice recordings, or video content through our secure platform.",
-                    },
-                    {
-                      step: "02",
-                      icon: "🧠",
-                      title: "AI Processing",
-                      description:
-                        "Our neural networks analyze patterns, extract features, and identify personality markers using advanced ML algorithms.",
-                    },
-                    {
-                      step: "03",
-                      icon: "📊",
-                      title: "Pattern Recognition",
-                      description:
-                        "Machine learning models identify personality traits, behavioral patterns, and psychological indicators from your data.",
-                    },
-                    {
-                      step: "04",
-                      icon: "📋",
-                      title: "Insights Generation",
-                      description:
-                        "Receive comprehensive personality reports with actionable insights, strengths, and growth recommendations.",
-                    },
-                  ].map((step, index) => (
-                    <div key={index} className="text-center relative">
-                      <div className="bg-white rounded-xl p-6 shadow-lg card-hover mb-4">
-                        <div className="text-blue-500 font-bold text-sm mb-2">
-                          STEP {step.step}
-                        </div>
-                        <div className="text-4xl mb-4">{step.icon}</div>
-                        <h3 className="text-xl font-bold text-gray-800 mb-3">
-                          {step.title}
-                        </h3>
-                        <p className="text-gray-600 text-sm">
-                          {step.description}
-                        </p>
-                      </div>
-                    </div>
-                  ))}
                 </div>
               </div>
-            </section>
 
-            {/* Output Examples Section */}
-            <section className="py-20 bg-white">
-              <div className="container mx-auto px-4">
-                <div className="text-center mb-16">
-                  <h2 className="text-4xl font-bold text-gray-800 mb-4">
-                    Comprehensive Personality Reports
-                  </h2>
-                  <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-                    Get detailed insights that go beyond traditional personality
-                    tests, with actionable recommendations for personal and
-                    professional growth.
-                  </p>
-                </div>
+              {/* Life Pillars Detailed Analysis */}
+              <div className="mb-8">
+                <h3 className="text-2xl font-semibold text-slate-700 mb-6 text-center">
+                  Life Pillars Analysis
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {Object.entries(profile.pillars).map(
+                    ([pillarName, pillar]) => (
+                      <div
+                        key={pillarName}
+                        className="pillar-card rounded-xl p-6 card-shadow"
+                      >
+                        <h4 className="text-lg font-semibold text-slate-700 mb-4 capitalize flex items-center">
+                          <span className="mr-2">
+                            {pillarName === "career"
+                              ? "💼"
+                              : pillarName === "health"
+                              ? "🏃‍♂️"
+                              : pillarName === "wealth"
+                              ? "💰"
+                              : pillarName === "mindset"
+                              ? "🧠"
+                              : pillarName === "intellect"
+                              ? "📚"
+                              : "❤️"}
+                          </span>
+                          {pillarName}
+                        </h4>
 
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                  {[
-                    {
-                      icon: "🎭",
-                      title: "Personality Type",
-                      description:
-                        "Detailed personality classification with behavioral patterns and communication preferences.",
-                      features: [
-                        "16 personality types",
-                        "Communication style",
-                        "Behavioral tendencies",
-                        "Interaction preferences",
-                      ],
-                    },
-                    {
-                      icon: "📈",
-                      title: "Trait Analysis",
-                      description:
-                        "Quantified analysis of key personality dimensions with visual representations.",
-                      features: [
-                        "Big Five traits",
-                        "Emotional intelligence",
-                        "Confidence levels",
-                        "Social dynamics",
-                      ],
-                    },
-                    {
-                      icon: "🎯",
-                      title: "Growth Insights",
-                      description:
-                        "Personalized recommendations for development and optimization strategies.",
-                      features: [
-                        "Strength identification",
-                        "Growth opportunities",
-                        "Career alignment",
-                        "Relationship insights",
-                      ],
-                    },
-                  ].map((output, index) => (
-                    <div
-                      key={index}
-                      className="bg-gray-50 rounded-xl p-8 card-hover"
-                    >
-                      <div className="text-center mb-6">
-                        <div className="text-5xl mb-4">{output.icon}</div>
-                        <h3 className="text-xl font-bold text-gray-800 mb-3">
-                          {output.title}
-                        </h3>
-                        <p className="text-gray-600 mb-6">
-                          {output.description}
-                        </p>
-                      </div>
-                      <div className="space-y-3">
-                        {output.features.map((feature, idx) => (
-                          <div
-                            key={idx}
-                            className="flex items-center space-x-3"
-                          >
-                            <span className="text-green-500 text-sm">✓</span>
-                            <span className="text-gray-700 text-sm">
-                              {feature}
+                        <div className="space-y-3 text-sm">
+                          <div>
+                            <span className="font-medium text-emerald-600">
+                              Ideal Environment:
                             </span>
+                            <p className="text-slate-600 mt-1">
+                              {pillar.ideal}
+                            </p>
                           </div>
-                        ))}
+
+                          <div>
+                            <span className="font-medium text-amber-600">
+                              Key Challenges:
+                            </span>
+                            <p className="text-slate-600 mt-1">
+                              {pillar.challenges}
+                            </p>
+                          </div>
+
+                          <div>
+                            <span className="font-medium text-blue-600">
+                              Growth Strategies:
+                            </span>
+                            <p className="text-slate-600 mt-1">
+                              {pillar.growth}
+                            </p>
+                          </div>
+
+                          <div>
+                            <span className="font-medium text-purple-600">
+                              Recommendations:
+                            </span>
+                            <p className="text-slate-600 mt-1">
+                              {pillar.recommendations}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    )
+                  )}
+                </div>
+              </div>
+
+              {/* 3-Step Transformation Roadmap */}
+              <div className="glass-effect rounded-2xl p-8 mb-8 card-shadow">
+                <h3 className="text-2xl font-semibold text-slate-700 mb-6 text-center">
+                  Your 3-Step Transformation Roadmap
+                </h3>
+                <div className="space-y-6">
+                  {profile.roadmap.map((phase, index) => (
+                    <div key={index} className="roadmap-step rounded-xl p-6">
+                      <div className="flex items-start">
+                        <div className="flex-shrink-0 w-8 h-8 bg-indigo-600 text-white rounded-full flex items-center justify-center font-bold mr-4">
+                          {index + 1}
+                        </div>
+                        <div className="flex-1">
+                          <h4 className="text-lg font-semibold text-slate-700 mb-2">
+                            {phase.phase}
+                          </h4>
+                          <p className="text-indigo-600 font-medium text-sm mb-2">
+                            {phase.duration}
+                          </p>
+                          <p className="text-slate-600 mb-3">{phase.focus}</p>
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                            {phase.actions.map((action, actionIndex) => (
+                              <div
+                                key={actionIndex}
+                                className="flex items-center text-sm text-slate-600"
+                              >
+                                <span className="text-emerald-500 mr-2">✓</span>
+                                {action}
+                              </div>
+                            ))}
+                          </div>
+                        </div>
                       </div>
                     </div>
                   ))}
                 </div>
               </div>
-            </section>
 
-            {/* CTA Section */}
-            <section className="py-20 gradient-bg text-white">
-              <div className="container mx-auto px-4 text-center">
-                <div className="max-w-3xl mx-auto">
-                  <h2 className="text-4xl font-bold mb-6">
-                    Ready to Discover Your Personality Profile?
-                  </h2>
-                  <p className="text-xl mb-8 opacity-90">
-                    Join thousands of users who have unlocked deeper
-                    self-awareness and improved their personal and professional
-                    relationships.
-                  </p>
-                  <a
-                    href="personality-analyzer.html"
-                    className="bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-bold py-4 px-8 rounded-lg text-lg transition-all transform hover:scale-105 shadow-lg inline-block"
-                  >
-                    🚀 Start Your Analysis Now
-                  </a>
-                  <div className="mt-8 text-sm opacity-75">
-                    ✓ Free analysis • ✓ Secure & private • ✓ Instant results
+              {/* Personal Recommendations */}
+              <div className="glass-effect rounded-2xl p-8 mb-8 card-shadow">
+                <h3 className="text-2xl font-semibold text-slate-700 mb-6 text-center">
+                  Personal Development Resources
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {/* Essential Reading */}
+                  <div className="bg-white bg-opacity-60 rounded-xl p-5 border border-white border-opacity-30">
+                    <h4 className="font-semibold text-slate-700 mb-3 flex items-center">
+                      <span className="text-xl mr-2">📚</span>
+                      Essential Reading Library
+                    </h4>
+                    <ul className="space-y-2">
+                      {profile.resources.reading.map((book, index) => (
+                        <li
+                          key={index}
+                          className="text-slate-600 text-sm flex items-start"
+                        >
+                          <span className="text-indigo-500 mr-2 mt-1">•</span>
+                          {book}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  {/* Must-Watch Content */}
+                  <div className="bg-white bg-opacity-60 rounded-xl p-5 border border-white border-opacity-30">
+                    <h4 className="font-semibold text-slate-700 mb-3 flex items-center">
+                      <span className="text-xl mr-2">🎥</span>
+                      Must-Watch Content
+                    </h4>
+                    <ul className="space-y-2">
+                      {profile.resources.content.map((content, index) => (
+                        <li
+                          key={index}
+                          className="text-slate-600 text-sm flex items-start"
+                        >
+                          <span className="text-indigo-500 mr-2 mt-1">•</span>
+                          {content}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  {/* Skill Development */}
+                  <div className="bg-white bg-opacity-60 rounded-xl p-5 border border-white border-opacity-30">
+                    <h4 className="font-semibold text-slate-700 mb-3 flex items-center">
+                      <span className="text-xl mr-2">🎯</span>
+                      Skill Development Courses
+                    </h4>
+                    <ul className="space-y-2">
+                      {profile.resources.courses.map((course, index) => (
+                        <li
+                          key={index}
+                          className="text-slate-600 text-sm flex items-start"
+                        >
+                          <span className="text-indigo-500 mr-2 mt-1">•</span>
+                          {course}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  {/* Wellness & Growth Tools */}
+                  <div className="bg-white bg-opacity-60 rounded-xl p-5 border border-white border-opacity-30">
+                    <h4 className="font-semibold text-slate-700 mb-3 flex items-center">
+                      <span className="text-xl mr-2">🌱</span>
+                      Wellness & Growth Tools
+                    </h4>
+                    <ul className="space-y-2">
+                      {profile.resources.tools.map((tool, index) => (
+                        <li
+                          key={index}
+                          className="text-slate-600 text-sm flex items-start"
+                        >
+                          <span className="text-indigo-500 mr-2 mt-1">•</span>
+                          {tool}
+                        </li>
+                      ))}
+                    </ul>
                   </div>
                 </div>
               </div>
-            </section>
 
-            {/* Footer */}
-            <footer className="bg-slate-900 text-white py-8">
-              <div className="text-center text-slate-400">
-                <p>
-                  © 2024 PersonalyzeAI. All rights reserved. Made with ❤️ for
-                  self-discovery.
-                </p>
+              {/* Action Buttons */}
+              <div className="text-center">
+                <button
+                  onClick={onRestart}
+                  className="bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white font-bold py-3 px-8 rounded-xl text-base transition-all transform hover:scale-105 shadow-lg hover:shadow-xl"
+                >
+                  Analyze Another Profile
+                </button>
               </div>
-            </footer>
+            </div>
           </div>
         );
-      }
+      };
 
-      // Render the Homepage
-      ReactDOM.render(<Homepage />, document.getElementById("root"));
+      // Helper Functions
+      const calculateScores = (userProfile) => {
+        const baseScores = {
+          Singer: {
+            social: 78,
+            communication: 85,
+            visual: 82,
+            personality: 88,
+            branding: 75,
+          },
+          Influencer: {
+            social: 92,
+            communication: 88,
+            visual: 90,
+            personality: 85,
+            branding: 87,
+          },
+          "Corporate Professional": {
+            social: 75,
+            communication: 90,
+            visual: 85,
+            personality: 92,
+            branding: 88,
+          },
+          Entrepreneur: {
+            social: 82,
+            communication: 87,
+            visual: 80,
+            personality: 95,
+            branding: 90,
+          },
+          Student: {
+            social: 70,
+            communication: 78,
+            visual: 75,
+            personality: 85,
+            branding: 72,
+          },
+          "Content Creator": {
+            social: 88,
+            communication: 82,
+            visual: 95,
+            personality: 87,
+            branding: 85,
+          },
+        };
+
+        const base = baseScores[userProfile.goal] || baseScores["Student"];
+
+        const timelineBonus = {
+          "6 months": 0,
+          "1 year": 3,
+          "2 years": 5,
+          "5+ years": 8,
+        };
+
+        const bonus = timelineBonus[userProfile.timeline] || 0;
+
+        const scores = {
+          social: Math.max(
+            60,
+            Math.min(100, base.social + bonus + (Math.random() - 0.5) * 15)
+          ),
+          communication: Math.max(
+            60,
+            Math.min(
+              100,
+              base.communication + bonus + (Math.random() - 0.5) * 15
+            )
+          ),
+          visual: Math.max(
+            60,
+            Math.min(100, base.visual + bonus + (Math.random() - 0.5) * 15)
+          ),
+          personality: Math.max(
+            60,
+            Math.min(100, base.personality + bonus + (Math.random() - 0.5) * 15)
+          ),
+          branding: Math.max(
+            60,
+            Math.min(100, base.branding + bonus + (Math.random() - 0.5) * 15)
+          ),
+        };
+
+        scores.overall =
+          (scores.social +
+            scores.communication +
+            scores.visual +
+            scores.personality +
+            scores.branding) /
+          5;
+        return scores;
+      };
+
+      // Main App Component
+      const App = () => {
+        const [currentPage, setCurrentPage] = useState("landing");
+        const [currentStep, setCurrentStep] = useState(1);
+        const [loadingMessage, setLoadingMessage] = useState(
+          "Processing your personality data..."
+        );
+        const [userProfile, setUserProfile] = useState({
+          goal: "",
+          timeline: "",
+          socialMedia: {},
+          audioFile: null,
+          videoFile: null,
+        });
+
+        const totalSteps = 4;
+
+        const canProceed = () => {
+          switch (currentStep) {
+            case 1:
+              return true; // Social media is optional
+            case 2:
+              return userProfile.audioFile !== null;
+            case 3:
+              return userProfile.videoFile !== null;
+            case 4:
+              return userProfile.goal !== "" && userProfile.timeline !== "";
+            default:
+              return false;
+          }
+        };
+
+        const handleNext = () => {
+          if (currentStep < totalSteps) {
+            setCurrentStep(currentStep + 1);
+          } else {
+            handleAnalyze();
+          }
+        };
+
+        const handlePrevious = () => {
+          if (currentStep > 1) {
+            setCurrentStep(currentStep - 1);
+          }
+        };
+
+        const handleAnalyze = () => {
+          setCurrentPage("loading");
+
+          const messages = [
+            "Processing your personality data...",
+            "Analyzing communication patterns...",
+            "Calculating aura scores...",
+            "Generating personalized recommendations...",
+            "Finalizing your digital identity profile...",
+          ];
+
+          let messageIndex = 0;
+          const interval = setInterval(() => {
+            setLoadingMessage(messages[messageIndex]);
+            messageIndex++;
+
+            if (messageIndex >= messages.length) {
+              clearInterval(interval);
+              setTimeout(() => setCurrentPage("results"), 500);
+            }
+          }, 800);
+        };
+
+        const handleRestart = () => {
+          setCurrentPage("landing");
+          setCurrentStep(1);
+          setUserProfile({
+            goal: "",
+            timeline: "",
+            socialMedia: {},
+            audioFile: null,
+            videoFile: null,
+          });
+        };
+
+        const updateProfile = (key, value) => {
+          setUserProfile((prev) => ({ ...prev, [key]: value }));
+        };
+
+        const updateSocialMedia = (platform, url) => {
+          setUserProfile((prev) => ({
+            ...prev,
+            socialMedia: { ...prev.socialMedia, [platform]: url },
+          }));
+        };
+
+        if (currentPage === "landing") {
+          return <LandingPage onStart={() => setCurrentPage("input")} />;
+        }
+
+        if (currentPage === "loading") {
+          return <LoadingPage message={loadingMessage} />;
+        }
+
+        if (currentPage === "results") {
+          return (
+            <ResultsPage userProfile={userProfile} onRestart={handleRestart} />
+          );
+        }
+
+        return (
+          <div className="min-h-screen">
+            <div className="max-w-4xl mx-auto p-6">
+              <ProgressBar currentStep={currentStep} totalSteps={totalSteps} />
+
+              <div className="glass-effect rounded-2xl p-8 card-shadow">
+                {currentStep === 1 && (
+                  <SocialMediaForm
+                    socialMedia={userProfile.socialMedia}
+                    onChange={updateSocialMedia}
+                  />
+                )}
+
+                {currentStep === 2 && (
+                  <FileUpload
+                    type="audio"
+                    file={userProfile.audioFile}
+                    onFileSelect={(file) => updateProfile("audioFile", file)}
+                    required={true}
+                  />
+                )}
+
+                {currentStep === 3 && (
+                  <FileUpload
+                    type="video"
+                    file={userProfile.videoFile}
+                    onFileSelect={(file) => updateProfile("videoFile", file)}
+                    required={true}
+                  />
+                )}
+
+                {currentStep === 4 && (
+                  <div className="space-y-8">
+                    <GoalSelection
+                      selectedGoal={userProfile.goal}
+                      onSelect={(goal) => updateProfile("goal", goal)}
+                    />
+
+                    {userProfile.goal && (
+                      <TimelineSelection
+                        selectedTimeline={userProfile.timeline}
+                        onSelect={(timeline) =>
+                          updateProfile("timeline", timeline)
+                        }
+                      />
+                    )}
+                  </div>
+                )}
+
+                {/* Navigation */}
+                <div className="flex justify-between mt-8">
+                  <button
+                    onClick={handlePrevious}
+                    className={`glass-effect text-slate-700 font-semibold py-3 px-6 rounded-xl hover:bg-white hover:bg-opacity-95 transition-all border border-slate-200 ${
+                      currentStep === 1 ? "invisible" : ""
+                    }`}
+                  >
+                    Previous
+                  </button>
+
+                  <div className="flex-1"></div>
+
+                  <button
+                    onClick={handleNext}
+                    disabled={!canProceed()}
+                    className={`font-semibold py-3 px-6 rounded-xl transition-all shadow-lg ${
+                      canProceed()
+                        ? "bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white hover:shadow-xl"
+                        : "bg-slate-300 text-slate-500 cursor-not-allowed"
+                    }`}
+                  >
+                    {currentStep === totalSteps ? "Get My Aura Score" : "Next"}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+      };
+
+      const root = ReactDOM.createRoot(document.getElementById("root"));
+      root.render(<App />);
     </script>
     <script>
       (function () {
@@ -549,7 +2024,7 @@
           if (b) {
             var d = b.createElement("script");
             d.innerHTML =
-              "window.__CF$cv$params={r:'973b5384f5897aa2',t:'MTc1NTk1OTYxOS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";
+              "window.__CF$cv$params={r:'97439cb9c2855525',t:'MTc1NjA0NjUwNC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";
             b.getElementsByTagName("head")[0].appendChild(d);
           }
         }
